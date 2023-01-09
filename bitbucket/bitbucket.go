@@ -30,6 +30,7 @@ type Client struct {
 	common service
 
 	AccessTokens *AccessTokensService
+	Keys         *KeysService
 }
 
 type service struct {
@@ -60,6 +61,24 @@ func (t *DateTime) UnmarshalJSON(bytes []byte) error {
 func (t DateTime) MarshalJSON() ([]byte, error) {
 	return json.Marshal(time.Time(t).Unix() * 1000)
 }
+
+type Permission string
+
+const (
+	PermissionRepoRead      Permission = "REPO_READ"
+	PermissionRepoWrite     Permission = "REPO_WRITE"
+	PermissionRepoAdmin     Permission = "REPO_ADMIN"
+	PermissionRepoCreate    Permission = "REPO_CREATE"
+	PermissionProjectView   Permission = "PROJECT_VIEW"
+	PermissionProjectRead   Permission = "PROJECT_READ"
+	PermissionProjectWrite  Permission = "PROJECT_WRITE"
+	PermissionProjectAdmin  Permission = "PROJECT_ADMIN"
+	PermissionProjectCreate Permission = "PROJECT_CREATE"
+	PermissionUserAdmin     Permission = "USER_ADMIN"
+	PermissionLicensedUser  Permission = "LICENSED_USER"
+	PermissionAdmin         Permission = "ADMIN"
+	PermissionSysAdmin      Permission = "SYS_ADMIN"
+)
 
 type Response struct {
 	*http.Response
@@ -98,6 +117,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	c.BaseURL = baseEndpoint
 	c.common.client = c
 	c.AccessTokens = (*AccessTokensService)(&c.common)
+	c.Keys = (*KeysService)(&c.common)
 	return c, nil
 }
 

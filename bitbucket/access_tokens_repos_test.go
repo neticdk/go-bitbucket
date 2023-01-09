@@ -13,6 +13,7 @@ import (
 func TestListRepositoryTokens(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/access-tokens/latest/projects/PRJ/repos/repo", req.URL.Path)
 		rw.Write([]byte(listTokenRepoResponse))
 	}))
 	defer server.Close()
@@ -27,6 +28,7 @@ func TestListRepositoryTokens(t *testing.T) {
 func TestGetRepositoryToken(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/access-tokens/latest/projects/PRJ/repos/repo/373646823580", req.URL.Path)
 		rw.Write([]byte(getTokenRepoResponse))
 	}))
 	defer server.Close()
@@ -43,6 +45,7 @@ func TestGetRepositoryToken(t *testing.T) {
 func TestGetRepositoryTokenNotFound(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/access-tokens/latest/projects/PRJ/repos/repo/373646823580", req.URL.Path)
 		rw.WriteHeader(http.StatusNotFound)
 	}))
 	defer server.Close()
@@ -60,6 +63,7 @@ func TestCreateRepositoryToken(t *testing.T) {
 		assert.Equal(t, "PUT", req.Method)
 		b, _ := io.ReadAll(req.Body)
 		assert.Equal(t, "{\"name\":\"Demo 3\",\"permissions\":[\"REPO_READ\"],\"expiryDays\":128}\n", string(b))
+		assert.Equal(t, "/access-tokens/latest/projects/PRJ/repos/repo", req.URL.Path)
 		rw.Write([]byte(createTokenResponse))
 	}))
 	defer server.Close()
@@ -69,7 +73,7 @@ func TestCreateRepositoryToken(t *testing.T) {
 	in := &AccessToken{
 		Name:        "Demo 3",
 		ExpireDays:  128,
-		Permissions: []string{TokenPermissionRepoRead},
+		Permissions: []Permission{PermissionRepoRead},
 	}
 	token, _, err := client.AccessTokens.CreateRepositoryToken(ctx, "PRJ", "repo", in)
 	assert.NoError(t, err)
@@ -79,6 +83,7 @@ func TestCreateRepositoryToken(t *testing.T) {
 func TestDeleteRepositoryToken(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "DELETE", req.Method)
+		assert.Equal(t, "/access-tokens/latest/projects/PRJ/repos/repo/848894838086", req.URL.Path)
 		rw.WriteHeader(http.StatusNoContent)
 	}))
 	defer server.Close()

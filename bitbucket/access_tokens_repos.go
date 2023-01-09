@@ -11,19 +11,14 @@ type AccessTokenList struct {
 }
 
 type AccessToken struct {
-	ID          string    `json:"id,omitempty"`
-	Name        string    `json:"name"`
-	Permissions []string  `json:"permissions"`
-	Created     *DateTime `json:"createdDate,omitempty"`
-	Expire      *DateTime `json:"expiryDate,omitempty"`
-	ExpireDays  int       `json:"expiryDays,omitempty"`
-	Token       string    `json:"token,omitempty"`
+	ID          string       `json:"id,omitempty"`
+	Name        string       `json:"name"`
+	Permissions []Permission `json:"permissions"`
+	Created     *DateTime    `json:"createdDate,omitempty"`
+	Expire      *DateTime    `json:"expiryDate,omitempty"`
+	ExpireDays  int          `json:"expiryDays,omitempty"`
+	Token       string       `json:"token,omitempty"`
 }
-
-const (
-	TokenPermissionRepoRead  = "REPO_READ"
-	TokenPermissionRepoWrite = "REPO_WRITE"
-)
 
 func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectKey, repositorySlug string) ([]AccessToken, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s", projectKey, repositorySlug)
