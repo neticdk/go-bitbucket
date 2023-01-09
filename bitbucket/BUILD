@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "access_tokens.go",
         "access_tokens_repos.go",
+        "access_tokens_users.go",
         "bitbucket.go",
         "keys.go",
         "keys_repos.go",
@@ -17,6 +18,7 @@ go_test(
     name = "go_default_test",
     srcs = [
         "access_tokens_repos_test.go",
+        "access_tokens_users_test.go",
         "bitbucket_test.go",
         "keys_repos_test.go",
     ],

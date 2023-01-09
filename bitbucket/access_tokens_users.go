@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectKey, repositorySlug string) ([]AccessToken, *Response, error) {
-	p := fmt.Sprintf("projects/%s/repos/%s", projectKey, repositorySlug)
+func (s *AccessTokensService) ListUserTokens(ctx context.Context, userSlug string) ([]AccessToken, *Response, error) {
+	p := fmt.Sprintf("users/%s", userSlug)
 	req, err := s.client.NewRequest("GET", accessTokenApiName, p, nil)
 	if err != nil {
 		return nil, nil, err
@@ -19,8 +19,8 @@ func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectK
 	return list.Tokens, resp, nil
 }
 
-func (s *AccessTokensService) GetRepositoryToken(ctx context.Context, projectKey, repositorySlug, tokenId string) (*AccessToken, *Response, error) {
-	p := fmt.Sprintf("projects/%s/repos/%s/%s", projectKey, repositorySlug, tokenId)
+func (s *AccessTokensService) GetUserToken(ctx context.Context, userSlug, tokenId string) (*AccessToken, *Response, error) {
+	p := fmt.Sprintf("users/%s/%s", userSlug, tokenId)
 	req, err := s.client.NewRequest("GET", accessTokenApiName, p, nil)
 	if err != nil {
 		return nil, nil, err
@@ -33,8 +33,8 @@ func (s *AccessTokensService) GetRepositoryToken(ctx context.Context, projectKey
 	return &token, resp, nil
 }
 
-func (s *AccessTokensService) CreateRepositoryToken(ctx context.Context, projectKey, repositorySlug string, token *AccessToken) (*AccessToken, *Response, error) {
-	p := fmt.Sprintf("projects/%s/repos/%s", projectKey, repositorySlug)
+func (s *AccessTokensService) CreateUserToken(ctx context.Context, userSlug string, token *AccessToken) (*AccessToken, *Response, error) {
+	p := fmt.Sprintf("users/%s", userSlug)
 	req, err := s.client.NewRequest("PUT", accessTokenApiName, p, token)
 	if err != nil {
 		return nil, nil, err
@@ -47,8 +47,8 @@ func (s *AccessTokensService) CreateRepositoryToken(ctx context.Context, project
 	return &t, resp, nil
 }
 
-func (s *AccessTokensService) DeleteRepositoryToken(ctx context.Context, projectKey, repositorySlug, tokenId string) (*Response, error) {
-	p := fmt.Sprintf("projects/%s/repos/%s/%s", projectKey, repositorySlug, tokenId)
+func (s *AccessTokensService) DeleteUserToken(ctx context.Context, userSlug, tokenId string) (*Response, error) {
+	p := fmt.Sprintf("users/%s/%s", userSlug, tokenId)
 	req, err := s.client.NewRequest("DELETE", accessTokenApiName, p, nil)
 	if err != nil {
 		return nil, err
