@@ -20,7 +20,7 @@ func TestListRepositoryTokens(t *testing.T) {
 
 	client, _ := NewClient(server.URL, nil)
 	ctx := context.Background()
-	tokens, _, err := client.AccessTokens.ListRepositoryTokens(ctx, "PRJ", "repo")
+	tokens, _, err := client.AccessTokens.ListRepositoryTokens(ctx, "PRJ", "repo", &ListOptions{})
 	assert.NoError(t, err)
 	assert.Len(t, tokens, 2)
 }

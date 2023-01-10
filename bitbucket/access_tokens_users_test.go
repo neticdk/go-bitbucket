@@ -20,7 +20,7 @@ func TestListUserTokens(t *testing.T) {
 
 	client, _ := NewClient(server.URL, nil)
 	ctx := context.Background()
-	tokens, _, err := client.AccessTokens.ListUserTokens(ctx, "user-id")
+	tokens, _, err := client.AccessTokens.ListUserTokens(ctx, "user-id", &ListOptions{})
 	assert.NoError(t, err)
 	assert.Len(t, tokens, 5)
 }

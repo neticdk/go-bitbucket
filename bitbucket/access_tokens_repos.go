@@ -5,14 +5,10 @@ import (
 	"fmt"
 )
 
-func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectKey, repositorySlug string) ([]AccessToken, *Response, error) {
+func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectKey, repositorySlug string, opts *ListOptions) ([]*AccessToken, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s", projectKey, repositorySlug)
-	req, err := s.client.NewRequest("GET", accessTokenApiName, p, nil)
-	if err != nil {
-		return nil, nil, err
-	}
 	var list accessTokenList
-	resp, err := s.client.Do(ctx, req, &list)
+	resp, err := s.client.GetPaged(ctx, accessTokenApiName, p, &list, opts)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -21,12 +17,8 @@ func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectK
 
 func (s *AccessTokensService) GetRepositoryToken(ctx context.Context, projectKey, repositorySlug, tokenId string) (*AccessToken, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s/%s", projectKey, repositorySlug, tokenId)
-	req, err := s.client.NewRequest("GET", accessTokenApiName, p, nil)
-	if err != nil {
-		return nil, nil, err
-	}
 	var token AccessToken
-	resp, err := s.client.Do(ctx, req, &token)
+	resp, err := s.client.Get(ctx, accessTokenApiName, p, &token)
 	if err != nil {
 		return nil, resp, err
 	}

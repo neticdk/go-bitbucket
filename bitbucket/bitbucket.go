@@ -31,18 +31,50 @@ type Client struct {
 
 	AccessTokens *AccessTokensService
 	Keys         *KeysService
+	Projects     *ProjectsService
 }
 
 type service struct {
 	client *Client
 }
 
+type Page struct {
+	// The following properties support the paged APIs.
+	Size     int
+	Limit    int
+	LastPage bool
+	Start    int
+	// The next page start should be used with the ListOptions struct.
+	NextPageStart int
+}
+
+// Paged defines interface to be supported by responses from Paged APIs
+type Paged interface {
+	Current() *Page
+}
+
+// ListResponse defines the common properties of a list response
 type ListResponse struct {
 	Size          int  `json:"size"`
 	Limit         int  `json:"limit"`
 	LastPage      bool `json:"isLastPage"`
 	Start         int  `json:"start"`
 	NextPageStart int  `json:"nextPageStart"`
+}
+
+func (r *ListResponse) Current() *Page {
+	return &Page{
+		r.Size,
+		r.Limit,
+		r.LastPage,
+		r.Start,
+		r.NextPageStart,
+	}
+}
+
+type ListOptions struct {
+	Limit uint
+	Start uint
 }
 
 type DateTime time.Time
@@ -82,6 +114,7 @@ const (
 
 type Response struct {
 	*http.Response
+	*Page
 }
 
 type ErrorResponse struct {
@@ -118,6 +151,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	c.common.client = c
 	c.AccessTokens = (*AccessTokensService)(&c.common)
 	c.Keys = (*KeysService)(&c.common)
+	c.Projects = (*ProjectsService)(&c.common)
 	return c, nil
 }
 
@@ -169,8 +203,6 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		return resp, err
 	}
 
-	// If status code 4xx - parse errors and add to response?
-
 	if v == nil {
 		return resp, nil
 	}
@@ -182,6 +214,10 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		}
 	}
 
+	if p, ok := v.(Paged); ok {
+		resp.Page = p.Current()
+	}
+
 	return resp, nil
 }
 
@@ -191,4 +227,26 @@ func CheckResponse(r *http.Response) error {
 	}
 
 	return &ErrorResponse{Response: r}
+}
+
+func (c *Client) Get(ctx context.Context, api, path string, v interface{}) (*Response, error) {
+	return c.GetPaged(ctx, api, path, v, nil)
+}
+
+func (c *Client) GetPaged(ctx context.Context, api, path string, v interface{}, opts *ListOptions) (*Response, error) {
+	req, err := c.NewRequest("GET", api, path, nil)
+	if err != nil {
+		return nil, err
+	}
+	if opts != nil {
+		query := req.URL.Query()
+		if opts.Limit != 0 {
+			query.Set("limit", fmt.Sprintf("%d", opts.Limit))
+		}
+		if opts.Start != 0 {
+			query.Set("start", fmt.Sprintf("%d", opts.Start))
+		}
+		req.URL.RawQuery = query.Encode()
+	}
+	return c.Do(ctx, req, v)
 }

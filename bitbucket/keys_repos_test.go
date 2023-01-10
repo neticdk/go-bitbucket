@@ -20,7 +20,7 @@ func TestListRepositoryKeys(t *testing.T) {
 
 	client, _ := NewClient(server.URL, nil)
 	ctx := context.Background()
-	keys, _, err := client.Keys.ListRepositoryKeys(ctx, "PRJ", "repo")
+	keys, _, err := client.Keys.ListRepositoryKeys(ctx, "PRJ", "repo", &ListOptions{})
 	assert.NoError(t, err)
 	assert.Len(t, keys, 1)
 	assert.Equal(t, uint64(601), keys[0].ID)

@@ -6,7 +6,7 @@ const accessTokenApiName = "access-tokens"
 
 type accessTokenList struct {
 	ListResponse
-	Tokens []AccessToken `json:"values"`
+	Tokens []*AccessToken `json:"values"`
 }
 
 type AccessToken struct {
