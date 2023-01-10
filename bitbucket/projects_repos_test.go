@@ -24,7 +24,7 @@ func TestListProjectRepositories(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, repos, 3)
 	assert.False(t, resp.LastPage)
-	assert.Equal(t, 25, resp.Page.NextPageStart)
+	assert.Equal(t, uint(25), resp.Page.NextPageStart)
 }
 
 func TestListProjectRepositoriesNextPage(t *testing.T) {

@@ -40,12 +40,12 @@ type service struct {
 
 type Page struct {
 	// The following properties support the paged APIs.
-	Size     int
-	Limit    int
+	Size     uint
+	Limit    uint
 	LastPage bool
-	Start    int
+	Start    uint
 	// The next page start should be used with the ListOptions struct.
-	NextPageStart int
+	NextPageStart uint
 }
 
 // Paged defines interface to be supported by responses from Paged APIs
@@ -55,11 +55,11 @@ type Paged interface {
 
 // ListResponse defines the common properties of a list response
 type ListResponse struct {
-	Size          int  `json:"size"`
-	Limit         int  `json:"limit"`
+	Size          uint `json:"size"`
+	Limit         uint `json:"limit"`
 	LastPage      bool `json:"isLastPage"`
-	Start         int  `json:"start"`
-	NextPageStart int  `json:"nextPageStart"`
+	Start         uint `json:"start"`
+	NextPageStart uint `json:"nextPageStart"`
 }
 
 func (r *ListResponse) Current() *Page {

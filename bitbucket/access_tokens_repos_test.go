@@ -78,6 +78,7 @@ func TestCreateRepositoryToken(t *testing.T) {
 	token, _, err := client.AccessTokens.CreateRepositoryToken(ctx, "PRJ", "repo", in)
 	assert.NoError(t, err)
 	assert.Equal(t, "BBDC-xxxx", token.Token)
+	assert.Equal(t, "access-token-user/2/1405", token.User.Name)
 }
 
 func TestDeleteRepositoryToken(t *testing.T) {
