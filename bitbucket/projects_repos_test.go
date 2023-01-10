@@ -117,13 +117,13 @@ const listProjectsRepositoriesResponse = `{
 		  "key": "PD",
 		  "id": 1084,
 		  "name": "Netic Platform Development",
-		  "description": "https://docs.netic.dk/display/PD",
+		  "description": "https://wiki/display/PD",
 		  "public": false,
 		  "type": "NORMAL",
 		  "links": {
 			"self": [
 			  {
-				"href": "https://git.netic.dk/projects/PD"
+				"href": "https://git/projects/PD"
 			  }
 			]
 		  }
@@ -133,17 +133,17 @@ const listProjectsRepositoriesResponse = `{
 		"links": {
 		  "clone": [
 			{
-			  "href": "ssh://git@git.netic.dk:7999/pd/ansible-netic-kubernetes.git",
+			  "href": "ssh://git@git:7999/pd/ansible-netic-kubernetes.git",
 			  "name": "ssh"
 			},
 			{
-			  "href": "https://git.netic.dk/scm/pd/ansible-netic-kubernetes.git",
+			  "href": "https://git/scm/pd/ansible-netic-kubernetes.git",
 			  "name": "http"
 			}
 		  ],
 		  "self": [
 			{
-			  "href": "https://git.netic.dk/projects/PD/repos/ansible-netic-kubernetes/browse"
+			  "href": "https://git/projects/PD/repos/ansible-netic-kubernetes/browse"
 			}
 		  ]
 		}
@@ -162,13 +162,13 @@ const listProjectsRepositoriesResponse = `{
 		  "key": "PD",
 		  "id": 1084,
 		  "name": "Netic Platform Development",
-		  "description": "https://docs.netic.dk/display/PD",
+		  "description": "https://wiki/display/PD",
 		  "public": false,
 		  "type": "NORMAL",
 		  "links": {
 			"self": [
 			  {
-				"href": "https://git.netic.dk/projects/PD"
+				"href": "https://git/projects/PD"
 			  }
 			]
 		  }
@@ -178,17 +178,17 @@ const listProjectsRepositoriesResponse = `{
 		"links": {
 		  "clone": [
 			{
-			  "href": "https://git.netic.dk/scm/pd/azure-rke.git",
+			  "href": "https://git/scm/pd/azure-rke.git",
 			  "name": "http"
 			},
 			{
-			  "href": "ssh://git@git.netic.dk:7999/pd/azure-rke.git",
+			  "href": "ssh://git@git:7999/pd/azure-rke.git",
 			  "name": "ssh"
 			}
 		  ],
 		  "self": [
 			{
-			  "href": "https://git.netic.dk/projects/PD/repos/azure-rke/browse"
+			  "href": "https://git/projects/PD/repos/azure-rke/browse"
 			}
 		  ]
 		}
@@ -207,13 +207,13 @@ const listProjectsRepositoriesResponse = `{
 		  "key": "PD",
 		  "id": 1084,
 		  "name": "Netic Platform Development",
-		  "description": "https://docs.netic.dk/display/PD",
+		  "description": "https://wiki/display/PD",
 		  "public": false,
 		  "type": "NORMAL",
 		  "links": {
 			"self": [
 			  {
-				"href": "https://git.netic.dk/projects/PD"
+				"href": "https://git/projects/PD"
 			  }
 			]
 		  }
@@ -223,17 +223,17 @@ const listProjectsRepositoriesResponse = `{
 		"links": {
 		  "clone": [
 			{
-			  "href": "ssh://git@git.netic.dk:7999/pd/ingest-netic-vector-template.git",
+			  "href": "ssh://git@git:7999/pd/ingest-netic-vector-template.git",
 			  "name": "ssh"
 			},
 			{
-			  "href": "https://git.netic.dk/scm/pd/ingest-netic-vector-template.git",
+			  "href": "https://git/scm/pd/ingest-netic-vector-template.git",
 			  "name": "http"
 			}
 		  ],
 		  "self": [
 			{
-			  "href": "https://git.netic.dk/projects/PD/repos/ingest-netic-vector-template/browse"
+			  "href": "https://git/projects/PD/repos/ingest-netic-vector-template/browse"
 			}
 		  ]
 		}
@@ -257,13 +257,13 @@ const getProjectsRepositoryResponse = `{
 	  "key": "PD",
 	  "id": 1084,
 	  "name": "Netic Platform Development",
-	  "description": "https://docs.netic.dk/display/PD",
+	  "description": "https://wiki/display/PD",
 	  "public": false,
 	  "type": "NORMAL",
 	  "links": {
 		"self": [
 		  {
-			"href": "https://git.netic.dk/projects/PD"
+			"href": "https://git/projects/PD"
 		  }
 		]
 	  }
@@ -273,17 +273,17 @@ const getProjectsRepositoryResponse = `{
 	"links": {
 	  "clone": [
 		{
-		  "href": "https://git.netic.dk/scm/pd/gotk-bootstrap-k8s.git",
+		  "href": "https://git/scm/pd/gotk-bootstrap-k8s.git",
 		  "name": "http"
 		},
 		{
-		  "href": "ssh://git@git.netic.dk:7999/pd/gotk-bootstrap-k8s.git",
+		  "href": "ssh://git@git:7999/pd/gotk-bootstrap-k8s.git",
 		  "name": "ssh"
 		}
 	  ],
 	  "self": [
 		{
-		  "href": "https://git.netic.dk/projects/PD/repos/gotk-bootstrap-k8s/browse"
+		  "href": "https://git/projects/PD/repos/gotk-bootstrap-k8s/browse"
 		}
 	  ]
 	}
@@ -302,13 +302,13 @@ const createProjectRepositoryResponse = `{
 	  "key": "PD",
 	  "id": 1084,
 	  "name": "Netic Platform Development",
-	  "description": "https://docs.netic.dk/display/PD",
+	  "description": "https://wiki/display/PD",
 	  "public": false,
 	  "type": "NORMAL",
 	  "links": {
 		"self": [
 		  {
-			"href": "https://git.netic.dk/projects/PD"
+			"href": "https://git/projects/PD"
 		  }
 		]
 	  }
@@ -328,7 +328,7 @@ const createProjectRepositoryResponse = `{
 	  ],
 	  "self": [
 		{
-		  "href": "https://git.netic.dk/projects/PD/repos/go-bitbucket-demo/browse"
+		  "href": "https://git/projects/PD/repos/go-bitbucket-demo/browse"
 		}
 	  ]
 	}
