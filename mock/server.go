@@ -77,13 +77,9 @@ func (h *FIFOReponseHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 
-	if h.CurrentIndex > len(h.Responses) {
-		panic(fmt.Sprintf("go-bitbucket/mock: no more mocks available for %s", r.URL.Path))
-	}
-
 	defer func() {
 		h.CurrentIndex++
 	}()
 
-	w.Write(h.Responses[h.CurrentIndex])
+	w.Write(h.Responses[h.CurrentIndex%len(h.Responses)])
 }
