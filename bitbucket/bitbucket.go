@@ -123,6 +123,8 @@ type ErrorResponse struct {
 }
 
 type ErrorMessage struct {
+	Message   string `json:"message,omitempty"`
+	Exception string `json:"exceptionName,omitempty"`
 }
 
 func (e *ErrorResponse) Error() string {

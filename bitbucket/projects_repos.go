@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type repositoryList struct {
+type RepositoryList struct {
 	ListResponse
 	Repositories []*Repository `json:"values"`
 }
@@ -38,7 +38,7 @@ const (
 
 func (s *ProjectsService) ListRepositories(ctx context.Context, projectKey string, opts *ListOptions) ([]*Repository, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos", projectKey)
-	var l repositoryList
+	var l RepositoryList
 	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
 	if err != nil {
 		return nil, resp, err

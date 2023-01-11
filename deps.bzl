@@ -9,6 +9,14 @@ def go_dependencies():
         version = "v1.1.1",
     )
     go_repository(
+        name = "com_github_julienschmidt_httprouter",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/julienschmidt/httprouter",
+        sum = "h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=",
+        version = "v1.3.0",
+    )
+
+    go_repository(
         name = "com_github_pmezard_go_difflib",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/pmezard/go-difflib",

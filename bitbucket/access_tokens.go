@@ -4,7 +4,7 @@ type AccessTokensService service
 
 const accessTokenApiName = "access-tokens"
 
-type accessTokenList struct {
+type AccessTokenList struct {
 	ListResponse
 	Tokens []*AccessToken `json:"values"`
 }

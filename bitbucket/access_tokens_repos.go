@@ -7,7 +7,7 @@ import (
 
 func (s *AccessTokensService) ListRepositoryTokens(ctx context.Context, projectKey, repositorySlug string, opts *ListOptions) ([]*AccessToken, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s", projectKey, repositorySlug)
-	var list accessTokenList
+	var list AccessTokenList
 	resp, err := s.client.GetPaged(ctx, accessTokenApiName, p, &list, opts)
 	if err != nil {
 		return nil, resp, err

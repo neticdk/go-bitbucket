@@ -5,12 +5,12 @@ import (
 	"fmt"
 )
 
-type sshKeyList struct {
+type SshKeyList struct {
 	ListResponse
-	Values []internalSshKey `json:"values"`
+	Keys []InternalSshKey `json:"values"`
 }
 
-type internalSshKey struct {
+type InternalSshKey struct {
 	Key struct {
 		ID        uint64 `json:"id,omitempty"`
 		Text      string `json:"text"`
@@ -33,13 +33,13 @@ type SshKey struct {
 
 func (s *KeysService) ListRepositoryKeys(ctx context.Context, projectKey, repositorySlug string, opts *ListOptions) ([]*SshKey, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s/ssh", projectKey, repositorySlug)
-	var list sshKeyList
+	var list SshKeyList
 	resp, err := s.client.GetPaged(ctx, keysApiName, p, &list, opts)
 	if err != nil {
 		return nil, resp, err
 	}
 	keys := make([]*SshKey, 0)
-	for _, k := range list.Values {
+	for _, k := range list.Keys {
 		keys = append(keys, newSshKey(k))
 	}
 	return keys, resp, nil
@@ -47,7 +47,7 @@ func (s *KeysService) ListRepositoryKeys(ctx context.Context, projectKey, reposi
 
 func (s *KeysService) GetRepositoryKey(ctx context.Context, projectKey, repositorySlug string, keyId uint64) (*SshKey, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s/ssh/%d", projectKey, repositorySlug, keyId)
-	var k internalSshKey
+	var k InternalSshKey
 	resp, err := s.client.Get(ctx, keysApiName, p, &k)
 	if err != nil {
 		return nil, resp, err
@@ -57,7 +57,7 @@ func (s *KeysService) GetRepositoryKey(ctx context.Context, projectKey, reposito
 
 func (s *KeysService) CreateRepositoryKey(ctx context.Context, projectKey, repositorySlug string, key *SshKey) (*SshKey, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s/ssh", projectKey, repositorySlug)
-	k := &internalSshKey{
+	k := &InternalSshKey{
 		Permission: key.Permission,
 	}
 	k.Key.Text = key.Text
@@ -68,7 +68,7 @@ func (s *KeysService) CreateRepositoryKey(ctx context.Context, projectKey, repos
 		return nil, nil, err
 	}
 
-	k = &internalSshKey{}
+	k = &InternalSshKey{}
 	resp, err := s.client.Do(ctx, req, k)
 	if err != nil {
 		return nil, resp, err
@@ -86,7 +86,7 @@ func (s *KeysService) DeleteRepositoryKey(ctx context.Context, projectKey, repos
 	return s.client.Do(ctx, req, nil)
 }
 
-func newSshKey(k internalSshKey) *SshKey {
+func newSshKey(k InternalSshKey) *SshKey {
 	return &SshKey{
 		ID:         k.Key.ID,
 		Text:       k.Key.Text,

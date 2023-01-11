@@ -7,7 +7,7 @@ import (
 
 func (s *AccessTokensService) ListUserTokens(ctx context.Context, userSlug string, opts *ListOptions) ([]*AccessToken, *Response, error) {
 	p := fmt.Sprintf("users/%s", userSlug)
-	var list accessTokenList
+	var list AccessTokenList
 	resp, err := s.client.GetPaged(ctx, accessTokenApiName, p, &list, opts)
 	if err != nil {
 		return nil, resp, err
