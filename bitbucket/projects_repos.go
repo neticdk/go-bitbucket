@@ -19,8 +19,16 @@ type Repository struct {
 	Description string            `json:"description,omitempty"`
 	Public      bool              `json:"public,omitempty"`
 	Archived    bool              `json:"archived,omitempty"`
-	State       RepositoryState   `json:"state,omitempty"`
+	State       *RepositoryState  `json:"state,omitempty"`
+	Project     *Project          `json:"project,omitempty"`
 	Links       map[string][]Link `json:"links,omitempty"`
+}
+
+type Project struct {
+	ID    uint64            `json:"id,omitempty"`
+	Key   string            `json:"key,omitempty"`
+	Name  string            `json:"name"`
+	Links map[string][]Link `json:"links,omitempty"`
 }
 
 type Link struct {
