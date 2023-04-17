@@ -1,6 +1,7 @@
 package bitbucket
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 )
@@ -35,6 +36,80 @@ const (
 	RepositoryStateInit       RepositoryState = "INITIALISING"
 	RepositoryStateOffline    RepositoryState = "OFFLINE"
 )
+
+type FileList struct {
+	ListResponse
+
+	Files []string `json:"values"`
+}
+
+type FileContent struct {
+	ListResponse
+
+	Binary   bool       `json:"binary,omitempty"`
+	Lines    []FileLine `json:"lines,omitempty"`
+	Path     *FilePath  `json:"path,omitempty"`
+	Revision string     `json:"revision,omitempty"`
+}
+
+type FileLine struct {
+	Text string `json:"text"`
+}
+
+type FilePath struct {
+	Components []string `json:"components"`
+	Parent     string   `json:"parent"`
+	Name       string   `json:"name"`
+	Extension  string   `json:"extension"`
+}
+
+type RepositorySearchOptions struct {
+	ListOptions
+
+	Archived    RepositoryArchived   `url:"archived,omitempty"`
+	ProjectName string               `url:"projectname,omitempty"`
+	ProjectKey  string               `url:"projectkey,omitempty"`
+	Visibility  RepositoryVisibility `url:"visibility,omitempty"`
+	Name        string               `url:"name,omitempty"`
+	Permission  Permission           `url:"permission,omitempty"`
+	State       RepositoryState      `url:"state,omitempty"`
+}
+
+type RepositoryArchived string
+
+const (
+	RepositoryArchivedActive   RepositoryArchived = "ACTIVE"
+	RepositoryArchivedArchived RepositoryArchived = "ARCHIVED"
+	RepositoryArchivedAll      RepositoryArchived = "ALL"
+)
+
+type RepositoryVisibility string
+
+const (
+	RepositoryVisbibilityPrivate RepositoryVisibility = "private"
+	RepositoryVisbibilityPublic  RepositoryVisibility = "public"
+)
+
+type FilesListOptions struct {
+	ListOptions
+
+	At string `url:"at,omitempty"`
+}
+
+type FileConentOptions struct {
+	ListOptions
+
+	At string `url:"at,omitempty"`
+}
+
+func (s *ProjectsService) SearchRepositories(ctx context.Context, opts *RepositorySearchOptions) ([]*Repository, *Response, error) {
+	var l RepositoryList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, "repos", &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.Repositories, resp, nil
+}
 
 func (s *ProjectsService) ListRepositories(ctx context.Context, projectKey string, opts *ListOptions) ([]*Repository, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos", projectKey)
@@ -78,4 +153,57 @@ func (s *ProjectsService) DeleteRepository(ctx context.Context, projectKey, repo
 		return nil, err
 	}
 	return s.client.Do(ctx, req, nil)
+}
+
+func (s *ProjectsService) ListFiles(ctx context.Context, projectKey, repositorySlug, path string, opts *FilesListOptions) ([]string, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/files/%s", projectKey, repositorySlug, path)
+
+	var l FileList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.Files, resp, nil
+}
+
+type ErrOnlyTextFilesSupported struct{}
+
+func (e *ErrOnlyTextFilesSupported) Error() string {
+	return "only files with text content supported"
+}
+
+func (s *ProjectsService) GetTextFileContent(ctx context.Context, projectKey, repositorySlug, path, at string) ([]byte, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/browse/%s", projectKey, repositorySlug, path)
+
+	var f FileContent
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &f, &FileConentOptions{At: at})
+	if err != nil {
+		return nil, resp, err
+	}
+
+	if f.Binary {
+		return nil, nil, &ErrOnlyTextFilesSupported{}
+	} else if f.Path != nil {
+		return nil, nil, &ErrOnlyTextFilesSupported{}
+	}
+
+	var b bytes.Buffer
+	opts := &ListOptions{Limit: resp.Limit}
+	for {
+		for _, l := range f.Lines {
+			if b.Len() > 0 {
+				b.WriteString("\n")
+			}
+			b.WriteString(l.Text)
+		}
+		if resp.LastPage {
+			break
+		}
+		opts.Start = resp.NextPageStart
+		resp, err = s.client.GetPaged(ctx, projectsApiName, p, &f, nil)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	return b.Bytes(), resp, nil
 }

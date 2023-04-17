@@ -10,6 +10,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/google/go-querystring/query"
 )
 
 const (
@@ -73,8 +75,8 @@ func (r *ListResponse) Current() *Page {
 }
 
 type ListOptions struct {
-	Limit uint
-	Start uint
+	Limit uint `url:"limit,omitempty"`
+	Start uint `url:"start,omitepmty"`
 }
 
 type DateTime time.Time
@@ -235,18 +237,15 @@ func (c *Client) Get(ctx context.Context, api, path string, v interface{}) (*Res
 	return c.GetPaged(ctx, api, path, v, nil)
 }
 
-func (c *Client) GetPaged(ctx context.Context, api, path string, v interface{}, opts *ListOptions) (*Response, error) {
+func (c *Client) GetPaged(ctx context.Context, api, path string, v interface{}, opts interface{}) (*Response, error) {
 	req, err := c.NewRequest("GET", api, path, nil)
 	if err != nil {
 		return nil, err
 	}
 	if opts != nil {
-		query := req.URL.Query()
-		if opts.Limit != 0 {
-			query.Set("limit", fmt.Sprintf("%d", opts.Limit))
-		}
-		if opts.Start != 0 {
-			query.Set("start", fmt.Sprintf("%d", opts.Start))
+		query, err := query.Values(opts)
+		if err != nil {
+			return nil, err
 		}
 		req.URL.RawQuery = query.Encode()
 	}

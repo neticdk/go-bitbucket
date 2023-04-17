@@ -14,6 +14,7 @@ go_library(
     ],
     importpath = "github.com/neticdk/go-bitbucket/bitbucket",
     visibility = ["//visibility:public"],
+    deps = ["@com_github_google_go_querystring//query:go_default_library"],
 )
 
 go_test(
