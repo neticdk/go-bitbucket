@@ -34,6 +34,7 @@ type Client struct {
 	AccessTokens *AccessTokensService
 	Keys         *KeysService
 	Projects     *ProjectsService
+	Users        *UsersService
 }
 
 type service struct {
@@ -96,6 +97,29 @@ func (t DateTime) MarshalJSON() ([]byte, error) {
 	return json.Marshal(time.Time(t).Unix() * 1000)
 }
 
+type ISOTime time.Time
+
+const isoLayout = "2006-01-02T15:04:05Z0700"
+
+func (t *ISOTime) UnmarshalJSON(bytes []byte) error {
+	var raw string
+	err := json.Unmarshal(bytes, &raw)
+	if err != nil {
+		return err
+	}
+	parsed, err := time.Parse(isoLayout, raw)
+	if err != nil {
+		return err
+	}
+	*t = ISOTime(parsed)
+	return nil
+}
+
+func (t ISOTime) MarshalJSON() ([]byte, error) {
+	s := time.Time(t).Format(isoLayout)
+	return []byte(s), nil
+}
+
 type Permission string
 
 const (
@@ -156,6 +180,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	c.AccessTokens = (*AccessTokensService)(&c.common)
 	c.Keys = (*KeysService)(&c.common)
 	c.Projects = (*ProjectsService)(&c.common)
+	c.Users = (*UsersService)(&c.common)
 	return c, nil
 }
 

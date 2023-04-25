@@ -22,8 +22,19 @@ var (
 )
 
 var (
-	ListRepositories = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos", Method: "GET"}
-	GetRepository    = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "GET"}
-	CreateRepository = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos", Method: "POST"}
-	DeleteRepository = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "DELETE"}
+	SearchRepositories = EndpointPattern{Pattern: "/api/latest/repos", Method: "GET"}
+	ListRepositories   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos", Method: "GET"}
+	GetRepository      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "GET"}
+	CreateRepository   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos", Method: "POST"}
+	DeleteRepository   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "DELETE"}
+	SearchBranches     = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/branches", Method: "GET"}
+	GetDefaultBranch   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/branches/default", Method: "GET"}
+	ListWebhooks       = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks", Method: "GET"}
+	GetWebhook         = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks/:id", Method: "GET"}
+	CreateWebhook      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks", Method: "POST"}
+	DeleteWebhook      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks/:id", Method: "DELETE"}
+)
+
+var (
+	GetUser = EndpointPattern{Pattern: "/api/latest/users/:userSlug", Method: "GET"}
 )
