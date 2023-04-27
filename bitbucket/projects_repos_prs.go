@@ -1,5 +1,10 @@
 package bitbucket
 
+import (
+	"context"
+	"fmt"
+)
+
 type PullRequest struct {
 	ID           uint64                   `json:"id,omitempty"`
 	Version      uint64                   `json:"version,omitempty"`
@@ -37,7 +42,7 @@ type PullRequestState string
 const (
 	PullRequestStateDeclined PullRequestState = "DECLINED"
 	PullRequestStateMerged   PullRequestState = "MERGED"
-	PullRequestStateOpen     PullRequestState = "MERGED"
+	PullRequestStateOpen     PullRequestState = "OPEN"
 )
 
 type PullRequestAuthorRole string
@@ -55,3 +60,37 @@ const (
 	PullRequestAuthorStatusUnapproved PullRequestAuthorStatus = "UNAPPROVED"
 	PullRequestAuthorStatusNeedsWork  PullRequestAuthorStatus = "NEEDS_WORK"
 )
+
+type PullRequestList struct {
+	ListResponse
+
+	PullRequests []*PullRequest `json:"values"`
+}
+
+type PullRequestSearchOptions struct {
+	ListOptions
+
+	At     string            `url:"at,omitempty"`
+	Filter string            `url:"filterText,omitempty"`
+	State  *PullRequestState `url:"state,omitempty"`
+}
+
+func (s *ProjectsService) SearchPullRequests(ctx context.Context, projectKey, repositorySlug string, opts *PullRequestSearchOptions) ([]*PullRequest, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/pull-requests", projectKey, repositorySlug)
+	var l PullRequestList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.PullRequests, resp, nil
+}
+
+func (s *ProjectsService) GetPullRequest(ctx context.Context, projectKey, repositorySlug string, pullRequestId uint64) (*PullRequest, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/pull-requests/%d", projectKey, repositorySlug, pullRequestId)
+	var pr PullRequest
+	resp, err := s.client.Get(ctx, projectsApiName, p, &pr)
+	if err != nil {
+		return nil, resp, err
+	}
+	return &pr, resp, nil
+}

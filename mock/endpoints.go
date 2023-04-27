@@ -29,6 +29,10 @@ var (
 	DeleteRepository   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "DELETE"}
 	SearchBranches     = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/branches", Method: "GET"}
 	GetDefaultBranch   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/branches/default", Method: "GET"}
+	SearchCommits      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/commits", Method: "GET"}
+	GetCommit          = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/commits/:commitId", Method: "GET"}
+	SearchPullRequests = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/pull-requests", Method: "GET"}
+	GetPullRequest     = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/pull-requests/:pullRequestId", Method: "GET"}
 	ListWebhooks       = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks", Method: "GET"}
 	GetWebhook         = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks/:id", Method: "GET"}
 	CreateWebhook      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug/webhooks", Method: "POST"}

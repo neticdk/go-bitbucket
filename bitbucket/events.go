@@ -1,33 +1,18 @@
 package bitbucket
 
-type GitUser struct {
-	Name  string `json:"name"`
-	Email string `json:"emailAddress"`
-}
-
-type CommitData struct {
-	ID        string   `json:"id"`
-	DisplayID string   `json:"displayId"`
-	Message   string   `json:"message"`
-	Author    GitUser  `json:"author"`
-	Authored  DateTime `json:"authorTimestamp"`
-	Comitter  GitUser  `json:"committer"`
-	Comitted  DateTime `json:"committerTimestamp"`
-}
-
-type Commit struct {
-	CommitData
-	Parents []CommitData `json:"parents"`
+type Event struct {
+	EventKey EventKey `json:"eventKey"`
+	Date     ISOTime  `json:"date"`
+	Actor    User     `json:"actor"`
 }
 
 type RepositoryPushEvent struct {
-	EventKey   EventKey                    `json:"eventKey"`
-	Date       ISOTime                     `json:"date"`
-	Actor      User                        `json:"actor"`
+	Event
+
 	Repository Repository                  `json:"repository"`
 	Changes    []RepositoryPushEventChange `json:"changes"`
-	Commits    []Commit                    `json:"commits"`
-	ToCommit   Commit                      `json:"toCommit"`
+	Commits    []Commit                    `json:"commits,omitempty"`
+	ToCommit   *Commit                     `json:"toCommit,omitempty"`
 }
 
 type RepositoryPushEventChange struct {
@@ -60,9 +45,8 @@ const (
 )
 
 type PullRequestEvent struct {
-	EventKey    EventKey    `json:"eventKey"`
-	Date        ISOTime     `json:"date"`
-	Actor       User        `json:"actor"`
+	Event
+
 	PullRequest PullRequest `json:"pullRequest"`
 }
 
