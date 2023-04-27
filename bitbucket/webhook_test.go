@@ -11,7 +11,7 @@ import (
 func TestWebhook(t *testing.T) {
 	secretKey := []byte("0123456789abcdef")
 
-	buf := bytes.NewBufferString(repoPushEvent)
+	buf := bytes.NewBufferString(repoPushEvent01)
 	req, err := http.NewRequest("POST", "http://server.io/webhook", buf)
 	req.Header.Add(EventSignatureHeader, "sha256=d82c0422a140fc24335536d9450538aeaa978dbc741262a161ee12b99a6bf05d")
 	req.Header.Add(EventKeyHeader, "repo:refs_changed")
@@ -25,9 +25,3 @@ func TestWebhook(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, "rep_1", repoEv.Repository.Slug)
 }
-
-/*
-	h := hmac.New(sha256.New, secretKey)
-	h.Write([]byte(repoPushEvent))
-	fmt.Printf("%s\n", hex.EncodeToString(h.Sum(nil)))
-*/
