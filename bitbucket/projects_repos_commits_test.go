@@ -2,6 +2,7 @@ package bitbucket
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -45,6 +46,48 @@ func TestGetCommit(t *testing.T) {
 	assert.Equal(t, "john.doe@mail.com", commit.Author.Email)
 	assert.Equal(t, "Added my awesome feature", commit.Message)
 
+}
+
+func TestCreateBuildStatus(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, "POST", req.Method)
+		b, _ := io.ReadAll(req.Body)
+		assert.Equal(t, "{\"key\":\"BUILD-ID\",\"state\":\"INPROGRESS\",\"url\":\"https://ci.domain.com/builds/BUILD-ID\",\"buildNumber\":\"number\",\"duration\":10000,\"ref\":\"refs/head\"}\n", string(b))
+		assert.Equal(t, "/api/latest/projects/PRJ/repos/repo/commits/commit/builds", req.URL.Path)
+		rw.Write([]byte(getWebhookResponse))
+	}))
+	defer server.Close()
+
+	client, _ := NewClient(server.URL, nil)
+	ctx := context.Background()
+	in := &BuildStatus{
+		Key:         "BUILD-ID",
+		State:       BuildStatusStateInProgress,
+		URL:         "https://ci.domain.com/builds/BUILD-ID",
+		BuildNumber: "number",
+		Duration:    10000,
+		Ref:         "refs/head",
+	}
+	_, err := client.Projects.CreateBuildStatus(ctx, "PRJ", "repo", "commit", in)
+	assert.NoError(t, err)
+}
+
+func TestListChanges(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/api/latest/projects/KEY/repos/repo/commits/00a2f8656ec89118e65588ff3ac18328db35f6bc/changes", req.URL.Path)
+
+		rw.Write([]byte(listChangesResponse))
+	}))
+	defer server.Close()
+
+	client, _ := NewClient(server.URL, nil)
+	ctx := context.Background()
+	commits, resp, err := client.Projects.ListChanges(ctx, "KEY", "repo", "00a2f8656ec89118e65588ff3ac18328db35f6bc", &ListOptions{})
+	assert.NoError(t, err)
+	assert.Len(t, commits, 1)
+	assert.True(t, resp.LastPage)
+	assert.Equal(t, "clusters/netic-internal/prod1/releases/k8s-inventory-collector/secrets.yaml", commits[0].Path.Title)
 }
 
 const searchCommitsResponse = `{
@@ -167,4 +210,50 @@ const getCommitResponse = `{
 		]
 	  }
 	]
+  }`
+
+const listChangesResponse = `{
+	"fromHash": null,
+	"toHash": "00a2f8656ec89118e65588ff3ac18328db35f6bc",
+	"properties": {},
+	"values": [
+	  {
+		"contentId": "1c602c0799d6d852a07affd0ac06b4ce8548d6f0",
+		"fromContentId": "e00a3bef11aec0b71858ebbd07d3158c3ef8e142",
+		"path": {
+		  "components": [
+			"clusters",
+			"netic-internal",
+			"prod1",
+			"releases",
+			"k8s-inventory-collector",
+			"secrets.yaml"
+		  ],
+		  "parent": "clusters/netic-internal/prod1/releases/k8s-inventory-collector",
+		  "name": "secrets.yaml",
+		  "extension": "yaml",
+		  "toString": "clusters/netic-internal/prod1/releases/k8s-inventory-collector/secrets.yaml"
+		},
+		"executable": false,
+		"percentUnchanged": -1,
+		"type": "MODIFY",
+		"nodeType": "FILE",
+		"srcExecutable": false,
+		"links": {
+		  "self": [
+			{
+			  "href": "https://git.domain.com/projects/KUB/repos/kubernetes-config/commits/00a2f8656ec89118e65588ff3ac18328db35f6bc#clusters/netic-internal/prod1/releases/k8s-inventory-collector/secrets.yaml"
+			}
+		  ]
+		},
+		"properties": {
+		  "gitChangeType": "MODIFY"
+		}
+	  }
+	],
+	"size": 1,
+	"isLastPage": true,
+	"start": 0,
+	"limit": 25,
+	"nextPageStart": null
   }`

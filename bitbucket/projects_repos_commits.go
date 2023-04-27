@@ -60,6 +60,61 @@ type CommitList struct {
 	Commits []*Commit `json:"values"`
 }
 
+type BuildStatus struct {
+	Key         string                 `json:"key"`
+	State       BuildStatusState       `json:"state"`
+	URL         string                 `json:"url"`
+	BuildNumber string                 `json:"buildNumber,omitempty"`
+	Description string                 `json:"description,omitempty"`
+	Duration    uint64                 `json:"duration,omitempty"`
+	Ref         string                 `json:"ref,omitempty"`
+	TestResult  *BuildStatusTestResult `json:"testResults,omitempty"`
+}
+
+type BuildStatusTestResult struct {
+	Failed     uint32 `json:"failed"`
+	Skipped    uint32 `json:"skipped"`
+	Successful uint32 `json:"successful"`
+}
+
+type BuildStatusState string
+
+const (
+	BuildStatusStateCancelled  BuildStatusState = "CANCELLED"
+	BuildStatusStateFailed     BuildStatusState = "FAILED"
+	BuildStatusStateInProgress BuildStatusState = "INPROGRESS"
+	BuildStatusStateSuccessful BuildStatusState = "SUCCESSFUL"
+	BuildStatusStateUnknown    BuildStatusState = "UNKNOWN"
+)
+
+type Change struct {
+	ContentId  string            `json:"contentId"`
+	Path       ChangePath        `json:"path"`
+	Executable bool              `json:"executable"`
+	Unchanged  int               `json:"percentUnchanged"`
+	Type       ChangeType        `json:"type"`
+	NodeType   ChangeNodeType    `json:"nodeType"`
+	Properties map[string]string `json:"properties"`
+}
+
+type ChangePath struct {
+	Components []string `json:"components"`
+	Parent     string   `json:"parent"`
+	Name       string   `json:"name"`
+	Extension  string   `json:"extension"`
+	Title      string   `json:"toString"`
+}
+
+type ChangeType string
+
+type ChangeNodeType string
+
+type ChangeList struct {
+	ListResponse
+
+	Changes []*Change `json:"values"`
+}
+
 func (s *ProjectsService) SearchCommits(ctx context.Context, projectKey, repositorySlug string, opts *CommitSearchOptions) ([]*Commit, *Response, error) {
 	p := fmt.Sprintf("projects/%s/repos/%s/commits", projectKey, repositorySlug)
 	var l CommitList
@@ -78,4 +133,29 @@ func (s *ProjectsService) GetCommit(ctx context.Context, projectKey, repositoryS
 		return nil, resp, err
 	}
 	return &c, resp, nil
+}
+
+func (s *ProjectsService) CreateBuildStatus(ctx context.Context, projectKey, repositorySlug, commitId string, status *BuildStatus) (*Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/commits/%s/builds", projectKey, repositorySlug, commitId)
+	req, err := s.client.NewRequest("POST", projectsApiName, p, status)
+	if err != nil {
+		return nil, err
+	}
+
+	var r Repository
+	resp, err := s.client.Do(ctx, req, &r)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}
+
+func (s *ProjectsService) ListChanges(ctx context.Context, projectKey, repositorySlug, commitId string, opts *ListOptions) ([]*Change, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/commits/%s/changes", projectKey, repositorySlug, commitId)
+	var l ChangeList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.Changes, resp, nil
 }
