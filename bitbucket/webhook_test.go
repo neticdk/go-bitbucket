@@ -17,11 +17,28 @@ func TestWebhook(t *testing.T) {
 	req.Header.Add(EventKeyHeader, "repo:refs_changed")
 	assert.NoError(t, err)
 
-	ev, err := ParsePayload(req, secretKey)
+	ev, payload, err := ParsePayload(req, secretKey)
 	assert.NoError(t, err)
-	assert.NotNil(t, ev)
+	assert.NotNil(t, payload)
 
-	repoEv, ok := ev.(*RepositoryPushEvent)
-	assert.True(t, ok)
-	assert.Equal(t, "rep_1", repoEv.Repository.Slug)
+	if assert.NotNil(t, ev) {
+		repoEv, ok := ev.(*RepositoryPushEvent)
+		assert.True(t, ok)
+		assert.Equal(t, "rep_1", repoEv.Repository.Slug)
+	}
+}
+
+func TestWebhookFailingSignature(t *testing.T) {
+	secretKey := []byte("abcdef0123456789")
+
+	buf := bytes.NewBufferString(repoPushEvent01)
+	req, err := http.NewRequest("POST", "http://server.io/webhook", buf)
+	req.Header.Add(EventSignatureHeader, "sha256=d82c0422a140fc24335536d9450538aeaa978dbc741262a161ee12b99a6bf05d")
+	req.Header.Add(EventKeyHeader, "repo:refs_changed")
+	assert.NoError(t, err)
+
+	ev, payload, err := ParsePayload(req, secretKey)
+	assert.Error(t, err)
+	assert.Nil(t, ev)
+	assert.Nil(t, payload)
 }
