@@ -22,6 +22,7 @@ var (
 )
 
 var (
+	ListProjects       = EndpointPattern{Pattern: "/api/latest/projects", Method: "GET"}
 	SearchRepositories = EndpointPattern{Pattern: "/api/latest/repos", Method: "GET"}
 	ListRepositories   = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos", Method: "GET"}
 	GetRepository      = EndpointPattern{Pattern: "/api/latest/projects/:projectKey/repos/:repositorySlug", Method: "GET"}
