@@ -24,13 +24,6 @@ type Repository struct {
 	Links       map[string][]Link `json:"links,omitempty"`
 }
 
-type Project struct {
-	ID    uint64            `json:"id,omitempty"`
-	Key   string            `json:"key,omitempty"`
-	Name  string            `json:"name"`
-	Links map[string][]Link `json:"links,omitempty"`
-}
-
 type Link struct {
 	Href string `json:"href"`
 	Name string `json:"name,omitempty"`

@@ -37,6 +37,7 @@ go_test(
         "projects_repos_prs_test.go",
         "projects_repos_test.go",
         "projects_repos_webhooks_test.go",
+        "projects_test.go",
         "users_test.go",
         "webhook_test.go",
     ],

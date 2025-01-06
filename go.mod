@@ -1,6 +1,6 @@
 module github.com/neticdk/go-bitbucket
 
-go 1.19
+go 1.23
 
 require github.com/stretchr/testify v1.8.1
 
