@@ -31,7 +31,7 @@ func TestSearchProjectPermissions(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "GET", req.Method)
 		assert.Equal(t, "/api/latest/projects/BB/permissions/search", req.URL.Path)
-		rw.Write([]byte(SearchProjectPermissionsResponse))
+		rw.Write([]byte(searchProjectPermissionsResponse))
 	}))
 	defer server.Close()
 
@@ -39,9 +39,10 @@ func TestSearchProjectPermissions(t *testing.T) {
 	ctx := context.Background()
 	perms, resp, err := client.Projects.SearchProjectPermissions(ctx, "BB", &ProjectPermissionSearchOptions{})
 	assert.NoError(t, err)
-	assert.Len(t, perms, 9)
+	assert.Len(t, perms, 8)
 	assert.True(t, resp.LastPage)
 	assert.Equal(t, "bitbucket-administrators", perms[0].Group)
+	assert.Equal(t, "superadmin", perms[5].User.Name)
 }
 
 const listProjectsResponse = `{
@@ -85,7 +86,7 @@ const listProjectsResponse = `{
 }
 `
 
-const SearchProjectPermissionsResponse = `{
+const searchProjectPermissionsResponse = `{
   "size": 9,
   "limit": 25,
   "isLastPage": true,
@@ -141,20 +142,16 @@ const SearchProjectPermissionsResponse = `{
         "active": true,
         "displayName": "Super Admin",
         "id": 11895,
-        "slug": "tal_netic.dk",
+        "slug": "myself_mymail.dk",
         "type": "NORMAL",
         "links": {
           "self": [
             {
-              "href": "https://git.netic.dk/users/tal_netic.dk"
+              "href": "https://git.netic.dk/users/myself_mymail.dk"
             }
           ]
         }
       }
-    },
-    {
-      "permission": "PROJECT_READ",
-      "group": "trifork-operations-stash-users-readonly"
     }
   ],
   "start": 0
