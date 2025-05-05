@@ -27,6 +27,24 @@ func TestListProjects(t *testing.T) {
 	assert.Equal(t, uint(0), resp.Page.NextPageStart)
 }
 
+func TestSearchProjectPermissions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/api/latest/projects/BB/permissions/search", req.URL.Path)
+		rw.Write([]byte(searchProjectPermissionsResponse))
+	}))
+	defer server.Close()
+
+	client, _ := NewClient(server.URL, nil)
+	ctx := context.Background()
+	perms, resp, err := client.Projects.SearchProjectPermissions(ctx, "BB", &ProjectPermissionSearchOptions{})
+	assert.NoError(t, err)
+	assert.Len(t, perms, 8)
+	assert.True(t, resp.LastPage)
+	assert.Equal(t, "bitbucket-administrators", perms[0].Group)
+	assert.Equal(t, "superadmin", perms[5].User.Name)
+}
+
 const listProjectsResponse = `{
 	"size": 2,
 	"limit": 25,
@@ -67,3 +85,74 @@ const listProjectsResponse = `{
     ]
 }
 `
+
+const searchProjectPermissionsResponse = `{
+  "size": 9,
+  "limit": 25,
+  "isLastPage": true,
+  "values": [
+    {
+      "permission": "ADMIN",
+      "group": "bitbucket-administrators"
+    },
+    {
+      "permission": "SYS_ADMIN",
+      "group": "bitbucket-system-administrators"
+    },
+    {
+      "permission": "REPO_CREATE",
+      "group": "project-bb-createrepo"
+    },
+    {
+      "permission": "PROJECT_READ",
+      "group": "project-bb-read"
+    },
+    {
+      "permission": "PROJECT_WRITE",
+      "group": "project-bb-write"
+    },
+    {
+      "permission": "SYS_ADMIN",
+      "user": {
+        "name": "superadmin",
+        "emailAddress": "stash@mymail.dk",
+        "active": true,
+        "displayName": "Admin",
+        "id": 1,
+        "slug": "superadmin",
+        "type": "NORMAL",
+        "links": {
+          "self": [
+            {
+              "href": "https://git.netic.dk/users/superadmin"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "permission": "REPO_CREATE",
+      "group": "netic-stash-users"
+    },
+    {
+      "permission": "PROJECT_ADMIN",
+      "user": {
+        "name": "myself@mymail.dk",
+        "emailAddress": "myself@mymail.dk",
+        "active": true,
+        "displayName": "Super Admin",
+        "id": 11895,
+        "slug": "myself_mymail.dk",
+        "type": "NORMAL",
+        "links": {
+          "self": [
+            {
+              "href": "https://git.netic.dk/users/myself_mymail.dk"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "start": 0
+}`
