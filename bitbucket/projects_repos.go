@@ -97,7 +97,7 @@ type FilesListOptions struct {
 	At string `url:"at,omitempty"`
 }
 
-type FileConentOptions struct {
+type FileContentOptions struct {
 	ListOptions
 
 	At string `url:"at,omitempty"`
@@ -177,7 +177,7 @@ func (s *ProjectsService) GetTextFileContent(ctx context.Context, projectKey, re
 	p := fmt.Sprintf("projects/%s/repos/%s/browse/%s", projectKey, repositorySlug, path)
 
 	var f FileContent
-	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &f, &FileConentOptions{At: at})
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &f, &FileContentOptions{At: at})
 	if err != nil {
 		return nil, resp, err
 	}
@@ -189,7 +189,7 @@ func (s *ProjectsService) GetTextFileContent(ctx context.Context, projectKey, re
 	}
 
 	var b bytes.Buffer
-	opts := &ListOptions{Limit: resp.Limit}
+	opts := &FileContentOptions{At: at, ListOptions: ListOptions{Limit: resp.Limit}}
 	for {
 		for _, l := range f.Lines {
 			if b.Len() > 0 {
@@ -201,7 +201,7 @@ func (s *ProjectsService) GetTextFileContent(ctx context.Context, projectKey, re
 			break
 		}
 		opts.Start = resp.NextPageStart
-		resp, err = s.client.GetPaged(ctx, projectsApiName, p, &f, nil)
+		resp, err = s.client.GetPaged(ctx, projectsApiName, p, &f, opts)
 		if err != nil {
 			return nil, nil, err
 		}
