@@ -94,3 +94,13 @@ func (s *ProjectsService) GetPullRequest(ctx context.Context, projectKey, reposi
 	}
 	return &pr, resp, nil
 }
+
+func (s *ProjectsService) ListPullRequestChanges(ctx context.Context, projectKey, repositorySlug string, pullRequestId uint64, opts *ListOptions) ([]*Change, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/pull-requests/%d/changes", projectKey, repositorySlug, pullRequestId)
+	var l ChangeList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.Changes, resp, nil
+}
