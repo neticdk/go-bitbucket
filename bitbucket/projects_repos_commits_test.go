@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +53,7 @@ func TestCreateBuildStatus(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "POST", req.Method)
 		b, _ := io.ReadAll(req.Body)
-		assert.Equal(t, "{\"key\":\"BUILD-ID\",\"state\":\"INPROGRESS\",\"url\":\"https://ci.domain.com/builds/BUILD-ID\",\"buildNumber\":\"number\",\"duration\":10000,\"ref\":\"refs/head\"}\n", string(b))
+		assert.Equal(t, "{\"key\":\"BUILD-ID\",\"state\":\"INPROGRESS\",\"url\":\"https://ci.domain.com/builds/BUILD-ID\",\"buildNumber\":\"number\",\"dateAdded\":1680350400000,\"duration\":10000,\"name\":\"my-build\",\"parent\":\"parentKey\",\"ref\":\"refs/head\"}\n", string(b))
 		assert.Equal(t, "/api/latest/projects/PRJ/repos/repo/commits/commit/builds", req.URL.Path)
 		rw.Write([]byte(getWebhookResponse))
 	}))
@@ -65,8 +66,11 @@ func TestCreateBuildStatus(t *testing.T) {
 		State:       BuildStatusStateInProgress,
 		URL:         "https://ci.domain.com/builds/BUILD-ID",
 		BuildNumber: "number",
+		DateAdded:   DateTime(time.Date(2023, 4, 1, 12, 0, 0, 0, time.UTC)),
 		Duration:    10000,
 		Ref:         "refs/head",
+		Name:        "my-build",
+		Parent:      "parentKey",
 	}
 	_, err := client.Projects.CreateBuildStatus(ctx, "PRJ", "repo", "commit", in)
 	assert.NoError(t, err)
