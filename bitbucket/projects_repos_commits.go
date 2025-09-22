@@ -65,8 +65,11 @@ type BuildStatus struct {
 	State       BuildStatusState       `json:"state"`
 	URL         string                 `json:"url"`
 	BuildNumber string                 `json:"buildNumber,omitempty"`
+	DateAdded   DateTime               `json:"dateAdded,omitempty"`
 	Description string                 `json:"description,omitempty"`
 	Duration    uint64                 `json:"duration,omitempty"`
+	Name        string                 `json:"name,omitempty"`
+	Parent      string                 `json:"parent,omitempty"`
 	Ref         string                 `json:"ref,omitempty"`
 	TestResult  *BuildStatusTestResult `json:"testResults,omitempty"`
 }
