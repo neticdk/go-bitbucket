@@ -443,7 +443,9 @@ const listPullRequestChangesResponse = `
         "self": [null]
       },
       "properties": {
-        "gitChangeType": "MODIFY"
+	  	"orphanedComments": 0,
+        "gitChangeType": "MODIFY",
+		"activeComments": 1
       }
     },
     {

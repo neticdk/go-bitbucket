@@ -91,13 +91,13 @@ const (
 )
 
 type Change struct {
-	ContentId  string            `json:"contentId"`
-	Path       ChangePath        `json:"path"`
-	Executable bool              `json:"executable"`
-	Unchanged  int               `json:"percentUnchanged"`
-	Type       ChangeType        `json:"type"`
-	NodeType   ChangeNodeType    `json:"nodeType"`
-	Properties map[string]string `json:"properties"`
+	ContentId  string         `json:"contentId"`
+	Path       ChangePath     `json:"path"`
+	Executable bool           `json:"executable"`
+	Unchanged  int            `json:"percentUnchanged"`
+	Type       ChangeType     `json:"type"`
+	NodeType   ChangeNodeType `json:"nodeType"`
+	Properties map[string]any `json:"properties"`
 }
 
 type ChangePath struct {
