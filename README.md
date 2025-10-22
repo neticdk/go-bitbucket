@@ -33,7 +33,7 @@ import (
 
 func main() {
 	// If using basic authentication, set the credentials - could also use standard OAuth 2 library.
-	hc := = (&bitbucket.BasicAuthTransport{
+	hc := (&bitbucket.BasicAuthTransport{
 		Username: "your_username",
 		Password: "your_password",
 	}).Client()
