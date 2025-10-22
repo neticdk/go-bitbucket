@@ -51,7 +51,7 @@ func main() {
 	opts := &bitbucket.RepositorySearchOptions{Permission: bitbucket.PermissionRepoWrite, ListOptions: bitbucket.ListOptions{Limit: 10}}
 	all := make([]*model.Repo, 0)
 	for {
-		repos, resp, err := bc.Projects.SearchRepositories(ctx, opts)
+		repos, resp, err := client.Projects.SearchRepositories(ctx, opts)
 		if err != nil {
             log.Fatal(err)
 		}
