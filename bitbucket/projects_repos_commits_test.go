@@ -105,7 +105,11 @@ func TestCompareChanges(t *testing.T) {
 
 	client, _ := NewClient(server.URL, nil)
 	ctx := context.Background()
-	changes, resp, err := client.Projects.CompareChanges(ctx, "KUB", "kubernetes-config", "a", "b", &CompareChangesOptions{})
+	opts := CompareChangesOptions{
+		From: "a",
+		To:   "b",
+	}
+	changes, resp, err := client.Projects.CompareChanges(ctx, "KUB", "kubernetes-config", &opts)
 	assert.NoError(t, err)
 	assert.Len(t, changes, 3)
 	assert.True(t, resp.LastPage)
