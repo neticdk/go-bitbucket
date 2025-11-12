@@ -80,6 +80,13 @@ type ListOptions struct {
 	Start uint `url:"start,omitepmty"`
 }
 
+type CompareChangesOptions struct {
+	ListOptions
+
+	From string `url:"from,omitempty"`
+	To   string `url:"to,omitempty"`
+}
+
 type DateTime time.Time
 
 func (t *DateTime) UnmarshalJSON(bytes []byte) error {

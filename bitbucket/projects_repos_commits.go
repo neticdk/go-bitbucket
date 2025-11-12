@@ -162,3 +162,19 @@ func (s *ProjectsService) ListChanges(ctx context.Context, projectKey, repositor
 	}
 	return l.Changes, resp, nil
 }
+
+func (s *ProjectsService) CompareChanges(ctx context.Context, projectKey, repositorySlug, fromCommit string, toCommit string, opts *CompareChangesOptions) ([]*Change, *Response, error) {
+	p := fmt.Sprintf("projects/%s/repos/%s/compare/changes", projectKey, repositorySlug)
+	if fromCommit != "" {
+		opts.From = fromCommit
+	}
+	if toCommit != "" {
+		opts.To = toCommit
+	}
+	var l ChangeList
+	resp, err := s.client.GetPaged(ctx, projectsApiName, p, &l, opts)
+	if err != nil {
+		return nil, resp, err
+	}
+	return l.Changes, resp, nil
+}
