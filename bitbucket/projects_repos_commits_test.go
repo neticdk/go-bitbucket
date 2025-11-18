@@ -94,6 +94,30 @@ func TestListChanges(t *testing.T) {
 	assert.Equal(t, "clusters/netic-internal/prod1/releases/k8s-inventory-collector/secrets.yaml", commits[0].Path.Title)
 }
 
+func TestCompareChanges(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, "GET", req.Method)
+		assert.Equal(t, "/api/latest/projects/KUB/repos/kubernetes-config/compare/changes", req.URL.Path)
+		assert.Equal(t, "from=a&fromRepo=forkedRepo&start=0&to=b", req.URL.Query().Encode())
+		rw.Write([]byte(compareChangesResponse))
+	}))
+	defer server.Close()
+
+	client, _ := NewClient(server.URL, nil)
+	ctx := context.Background()
+	opts := CompareChangesOptions{
+		FromRepo: "forkedRepo",
+		From:     "a",
+		To:       "b",
+	}
+	changes, resp, err := client.Projects.CompareChanges(ctx, "KUB", "kubernetes-config", &opts)
+	assert.NoError(t, err)
+	assert.Len(t, changes, 3)
+	assert.True(t, resp.LastPage)
+	assert.Equal(t, "lib.c", changes[1].Path.Name)
+
+}
+
 const searchCommitsResponse = `{
 	"values": [
 	  {
@@ -261,3 +285,93 @@ const listChangesResponse = `{
 	"limit": 25,
 	"nextPageStart": null
   }`
+
+const compareChangesResponse = `{
+    "fromHash": "2d9dd5ddcecaa4255e43a20517a2392f3271feb5",
+    "isLastPage": true,
+    "limit": 25,
+    "nextPageStart": null,
+    "properties": {},
+    "size": 3,
+    "start": 0,
+    "toHash": "d3560245aa15e5f6d0d9315fc1d85a68af82e705",
+    "values": [
+        {
+            "contentId": "18abf8a5cafd28c37954e8324f1d938cb2fea916",
+            "executable": false,
+            "fromContentId": "3ad61a0da64ebd1d739b1d204456ff3fbb4fc64d",
+            "links": {
+                "self": [
+                    null
+                ]
+            },
+            "nodeType": "FILE",
+            "path": {
+                "components": [
+                    "README.md"
+                ],
+                "extension": "md",
+                "name": "README.md",
+                "parent": "",
+                "toString": "README.md"
+            },
+            "percentUnchanged": -1,
+            "properties": {
+                "gitChangeType": "MODIFY"
+            },
+            "srcExecutable": false,
+            "type": "MODIFY"
+        },
+        {
+            "contentId": "cf8c875b48d99dd9e721b15088da2c59a65d3e28",
+            "executable": false,
+            "fromContentId": "0000000000000000000000000000000000000000",
+            "links": {
+                "self": [
+                    null
+                ]
+            },
+            "nodeType": "FILE",
+            "path": {
+                "components": [
+                    "lib.c"
+                ],
+                "extension": "c",
+                "name": "lib.c",
+                "parent": "",
+                "toString": "lib.c"
+            },
+            "percentUnchanged": -1,
+            "properties": {
+                "gitChangeType": "ADD"
+            },
+            "type": "ADD"
+        },
+        {
+            "contentId": "08494a77a4e97a7139ee7a4d24b57bd139e474bc",
+            "executable": false,
+            "fromContentId": "d3afd5565cf301872bd447b164ef8c58047f1f8f",
+            "links": {
+                "self": [
+                    null
+                ]
+            },
+            "nodeType": "FILE",
+            "path": {
+                "components": [
+                    "main.c"
+                ],
+                "extension": "c",
+                "name": "main.c",
+                "parent": "",
+                "toString": "main.c"
+            },
+            "percentUnchanged": -1,
+            "properties": {
+                "gitChangeType": "MODIFY"
+            },
+            "srcExecutable": false,
+            "type": "MODIFY"
+        }
+    ]
+}`
