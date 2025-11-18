@@ -83,8 +83,9 @@ type ListOptions struct {
 type CompareChangesOptions struct {
 	ListOptions
 
-	From string `url:"from,omitempty"`
-	To   string `url:"to,omitempty"`
+	FromRepo string `url:"fromRepo,omitempty"`
+	From     string `url:"from,omitempty"`
+	To       string `url:"to,omitempty"`
 }
 
 type DateTime time.Time

@@ -98,7 +98,7 @@ func TestCompareChanges(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "GET", req.Method)
 		assert.Equal(t, "/api/latest/projects/KUB/repos/kubernetes-config/compare/changes", req.URL.Path)
-		assert.Equal(t, "from=a&start=0&to=b", req.URL.Query().Encode())
+		assert.Equal(t, "from=a&fromRepo=forkedRepo&start=0&to=b", req.URL.Query().Encode())
 		rw.Write([]byte(compareChangesResponse))
 	}))
 	defer server.Close()
@@ -106,8 +106,9 @@ func TestCompareChanges(t *testing.T) {
 	client, _ := NewClient(server.URL, nil)
 	ctx := context.Background()
 	opts := CompareChangesOptions{
-		From: "a",
-		To:   "b",
+		FromRepo: "forkedRepo",
+		From:     "a",
+		To:       "b",
 	}
 	changes, resp, err := client.Projects.CompareChanges(ctx, "KUB", "kubernetes-config", &opts)
 	assert.NoError(t, err)
